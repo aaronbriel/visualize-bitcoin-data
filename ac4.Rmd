@@ -1,0 +1,58 @@
+---
+title: 'Activity 4: Visualize Graph Data'
+author: "GT Account Name: abriel3"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Inspect
+
+Name of network dataset: bitcoin-otc   
+Description: A network that stores the reputations of individuals who trade Bitcoin on the Bitcoin OTC platform.  
+Link: http://snap.stanford.edu/data/soc-sign-bitcoinotc.html  
+  
+
+```{r results='hide', echo=FALSE, message=FALSE}
+#install.packages("igraph")
+library(igraph)
+btc <- read.csv("soc-sign-bitcoinotc.csv", header=TRUE)
+btc_g <- graph.data.frame(btc, directed=TRUE)
+```
+Tail of vertices:  
+```{r echo=FALSE}
+tail(V(btc_g))
+```
+Sample of 10 edges:  
+```{r echo=FALSE}
+E(btc_g)[sample(1:ecount(btc_g), 10)]
+```  
+Mean degree of nodes:  
+```{r echo=FALSE}
+mean(degree(btc_g, v = V(btc_g), mode = c("all"),
+            loops = TRUE, normalized = FALSE))
+```
+Mean degree distribution:  
+```{r echo=FALSE}
+mean(degree_distribution(btc_g, cumulative = FALSE))
+```  
+  
+##Visualization:  
+The graph below shows a subset of 10 traders in the bitcoin-otc network, where arrows indicate direction of who rated who, and vertex size represents the betweenness centrality of each vertex.
+
+```{r echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+# X6 is SOURCE
+# X2 is TARGET
+# X4 is RATING
+# X1289241911.72836 is TIMESTAMP
+
+# Getting subset of 10 nodes
+btc_g_sub <- subgraph(btc_g, c(1:10))
+plot(btc_g_sub, vertex.size=betweenness(btc_g_sub))
+```
+
+##References:  
+
+**Citation required for use of dataset,** S. Kumar, F. Spezzano, V.S. Subrahmanian, C. Faloutsos. Edge Weight Prediction in Weighted Signed Networks. IEEE International Conference on Data Mining (ICDM), 2016.
